@@ -386,7 +386,8 @@ module Kitchen
           begin
             @config = conf
             return submit_spot(state)
-          rescue
+          rescue => e
+            info "Failed to submit a spot #{e.message}"
           end
         end
 
@@ -400,6 +401,7 @@ module Kitchen
         # deleting the instance cancels the request, but deleting the request
         # does not affect the instance
         state[:spot_request_id] = spot_request_id
+        sleep 5
         ec2.client.wait_until(
           :spot_instance_request_fulfilled,
           :spot_instance_request_ids => [spot_request_id]
